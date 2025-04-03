@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lưu Tọa Độ Sang GPX</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        
+        .container {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .point-list {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .point-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .point-item:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .error {
+            color: #e74c3c;
+            margin-top: 5px;
+        }
+        
+        .custom-name-input {
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .hidden-input {
+            display: none;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .file-info {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .file-info h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lưu Tọa Độ Sang GPX</h1>
+        
+        <div class="form-group">
+            <label for="coordinates">Nhập Tọa Độ:</label>
+            <input type="text" id="coordinates" placeholder="Nhập tọa độ (ví dụ: 21.0285,105.8542 hoặc 21.0285 105.8542)">
+            <div class="error" id="coord-error"></div>
+        </div>
+        
+        <div class="form-group">
+            <label for="pointType">Loại Điểm:</label>
+            <select id="pointType">
+                <option value="40km/h">40km/h</option>
+                <option value="50km/h">50km/h</option>
+                <option value="60km/h">60km/h</option>
+                <option value="70km/h">70km/h</option>
+                <option value="80km/h">80km/h</option>
+                <option value="90km/h">90km/h</option>
+                <option value="100km/h">100km/h</option>
+                <option value="120km/h">120km/h</option>
+                <option value="custom">Tên khác...</option>
+            </select>
+            
+            <div class="custom-name-input" id="customNameContainer">
+                <label for="customName">Tên tùy chỉnh:</label>
+                <input type="text" id="customName" placeholder="Nhập tên tùy chỉnh">
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button id="addPoint">Thêm Điểm</button>
+            <button id="exportGPX">Xuất File GPX</button>
+            <button id="clearAll">Xóa Tất Cả</button>
+            <button id="importGPXBtn">Đọc File GPX</button>
+            <input type="file" id="gpxFileInput" class="hidden-input" accept=".gpx">
+        </div>
+        
+        <div id="fileInfoContainer" style="display: none;" class="file-info">
+            <h3>Thông tin File GPX</h3>
+            <div id="fileInfo"></div>
+        </div>
+        
+        <div class="point-list" id="pointList">
+            <!-- Điểm sẽ được hiển thị ở đây -->
+            <div class="no-points">Chưa có điểm nào được thêm</div>
+        </div>
+    </div>
+    
+    <script>
+        // Các biến toàn cục
+        let points = [];
+        const storageKey = 'gpxPoints';
+        
+        // Chọn các phần tử DOM
+        const coordinatesInput = document.getElementById('coordinates');
+        const pointTypeSelect = document.getElementById('pointType');
+        const customNameContainer = document.getElementById('customNameContainer');
+        const customNameInput = document.getElementById('customName');
+        const addPointButton = document.getElementById('addPoint');
+        const exportGPXButton = document.getElementById('exportGPX');
+        const clearAllButton = document.getElementById('clearAll');
+        const pointListElement = document.getElementById('pointList');
+        const coordErrorElement = document.getElementById('coord-error');
+        const importGPXButton = document.getElementById('importGPXBtn');
+        const gpxFileInput = document.getElementById('gpxFileInput');
+        const fileInfoContainer = document.getElementById('fileInfoContainer');
+        const fileInfoElement = document.getElementById('fileInfo');
+        
+        // Hàm phân tích tọa độ từ chuỗi nhập vào
+        function parseCoordinates(input) {
+            // Loại bỏ khoảng trắng không cần thiết
+            input = input.trim();
+            
+            // Các mẫu regex phổ biến cho tọa độ
+            const patterns = [
+                // 21.0285,105.8542
+                /^(-?\d+\.?\d*),\s*(-?\d+\.?\d*)$/,
+                
+                // 21.0285 105.8542
+                /^(-?\d+\.?\d*)\s+(-?\d+\.?\d*)$/,
+                
+                // 21°01'42.6"N 105°51'15.1"E
+                /^(\d+)°(\d+)'(\d+\.?\d*)"([NS])\s+(\d+)°(\d+)'(\d+\.?\d*)"([EW])$/,
+                
+                // Từ URL Google Maps
+                /=(-?\d+\.?\d*),(-?\d+\.?\d*)/,
+                /ll=(-?\d+\.?\d*),(-?\d+\.?\d*)/,
+                
+                // Từ URL với định dạng lat=X&lon=Y
+                /lat=(-?\d+\.?\d*).*&lon=(-?\d+\.?\d*)/,
+		/lat=(-?\d+\.?\d*).*&lng=(-?\d+\.?\d*)/
+            ];
+            
+            for (const pattern of patterns) {
+                const match = input.match(pattern);
+                if (match) {
+                    // Phân tích tọa độ theo định dạng độ, phút, giây
+                    if (pattern.toString().includes('°')) {
+                        const latDeg = parseFloat(match[1]);
+                        const latMin = parseFloat(match[2]);
+                        const latSec = parseFloat(match[3]);
+                        const latDir = match[4];
+                        
+                        const lonDeg = parseFloat(match[5]);
+                        const lonMin = parseFloat(match[6]);
+                        const lonSec = parseFloat(match[7]);
+                        const lonDir = match[8];
+                        
+                        let lat = latDeg + (latMin / 60) + (latSec / 3600);
+                        let lon = lonDeg + (lonMin / 60) + (lonSec / 3600);
+                        
+                        if (latDir === 'S') lat = -lat;
+                        if (lonDir === 'W') lon = -lon;
+                        
+                        return { lat, lon };
+                    }
+                    
+                    // Phân tích tọa độ theo định dạng số thập phân
+                    const lat = parseFloat(match[1]);
+                    const lon = parseFloat(match[2]);
+                    
+                    // Kiểm tra tọa độ hợp lệ
+                    if (isValidCoordinate(lat, lon)) {
+                        return { lat, lon };
+                    }
+                }
+            }
+            
+            return null;
+        }
+        
+        // Kiểm tra tọa độ có hợp lệ không
+        function isValidCoordinate(lat, lon) {
+            return !isNaN(lat) && !isNaN(lon) && 
+                   lat >= -90 && lat <= 90 && 
+                   lon >= -180 && lon <= 180;
+        }
+        
+        // Lấy tên điểm từ lựa chọn người dùng
+        function getPointName() {
+            if (pointTypeSelect.value === 'custom') {
+                return customNameInput.value.trim() || 'Điểm tùy chỉnh';
+            }
+            return pointTypeSelect.value;
+        }
+        
+        // Thêm một điểm mới
+        function addPoint() {
+            const coordInput = coordinatesInput.value.trim();
+            if (!coordInput) {
+                showError('Vui lòng nhập tọa độ');
+                return;
+            }
+            
+            const parsedCoord = parseCoordinates(coordInput);
+            if (!parsedCoord) {
+                showError('Không thể nhận dạng tọa độ. Vui lòng kiểm tra lại định dạng.');
+                return;
+            }
+            
+            // Xóa thông báo lỗi nếu có
+            clearError();
+            
+            // Thêm điểm vào danh sách
+            const point = {
+                name: getPointName(),
+                lat: parsedCoord.lat,
+                lon: parsedCoord.lon,
+                time: new Date().toISOString()
+            };
+            
+            points.push(point);
+            savePoints();
+            renderPointList();
+            
+            // Xóa dữ liệu đã nhập
+            coordinatesInput.value = '';
+            if (pointTypeSelect.value === 'custom') {
+                customNameInput.value = '';
+            }
+        }
+        
+        // Hiển thị thông báo lỗi
+        function showError(message) {
+            coordErrorElement.textContent = message;
+        }
+        
+        // Xóa thông báo lỗi
+        function clearError() {
+            coordErrorElement.textContent = '';
+        }
+        
+        // Hiển thị danh sách điểm
+        function renderPointList() {
+            pointListElement.innerHTML = '';
+            
+            if (points.length === 0) {
+                pointListElement.innerHTML = '<div class="no-points">Chưa có điểm nào được thêm</div>';
+                return;
+            }
+            
+            points.forEach((point, index) => {
+                const pointElement = document.createElement('div');
+                pointElement.className = 'point-item';
+                pointElement.innerHTML = `
+                    <div>
+                        <strong>${point.name}</strong> - 
+                        Lat: ${point.lat.toFixed(6)}, Lon: ${point.lon.toFixed(6)}
+                    </div>
+                    <button class="delete-btn" data-index="${index}">Xóa</button>
+                `;
+                pointListElement.appendChild(pointElement);
+            });
+            
+            // Thêm sự kiện cho nút xóa
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    deletePoint(index);
+                });
+            });
+        }
+        
+        // Xóa một điểm
+        function deletePoint(index) {
+            if (index >= 0 && index < points.length) {
+                points.splice(index, 1);
+                savePoints();
+                renderPointList();
+            }
+        }
+        
+        // Lưu điểm vào Local Storage
+        function savePoints() {
+            localStorage.setItem(storageKey, JSON.stringify(points));
+        }
+        
+        // Tải điểm từ Local Storage
+        function loadPoints() {
+            const savedPoints = localStorage.getItem(storageKey);
+            if (savedPoints) {
+                points = JSON.parse(savedPoints);
+                renderPointList();
+            }
+        }
+        
+        // Tạo và tải xuống file GPX
+        function exportGPX() {
+            if (points.length === 0) {
+                alert('Chưa có điểm nào để xuất file');
+                return;
+            }
+            
+            // Tạo nội dung file GPX
+            let gpxContent = `<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Coordinate to GPX Converter" xmlns="http://www.topografix.com/GPX/1/1">
+    <metadata>
+        <name>Waypoints Export</name>
+        <time>${new Date().toISOString()}</time>
+    </metadata>`;
+            
+            // Thêm các điểm
+            points.forEach(point => {
+                gpxContent += `
+    <wpt lat="${point.lat}" lon="${point.lon}">
+        <name>${escapeXml(point.name)}</name>
+        <time>${point.time}</time>
+    </wpt>`;
+            });
+            
+            gpxContent += `
+</gpx>`;
+            
+            // Tạo và tải xuống file
+            const blob = new Blob([gpxContent], { type: 'application/gpx+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'waypoints.gpx';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // Escape các ký tự đặc biệt trong XML
+        function escapeXml(unsafe) {
+            return unsafe.replace(/[<>&'"]/g, function (c) {
+                switch (c) {
+                    case '<': return '&lt;';
+                    case '>': return '&gt;';
+                    case '&': return '&amp;';
+                    case '\'': return '&apos;';
+                    case '"': return '&quot;';
+                }
+            });
+        }
+        
+        // Xóa tất cả các điểm
+        function clearAllPoints() {
+            if (confirm('Bạn có chắc muốn xóa tất cả các điểm?')) {
+                points = [];
+                savePoints();
+                renderPointList();
+                // Ẩn thông tin file khi xóa tất cả
+                fileInfoContainer.style.display = 'none';
+            }
+        }
+        
+        // Đọc file GPX
+        function readGPXFile(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const content = e.target.result;
+                parseGPXContent(content, file.name);
+            };
+            
+            reader.onerror = function() {
+                alert('Lỗi đọc file: ' + reader.error);
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        // Phân tích nội dung file GPX
+        function parseGPXContent(content, fileName) {
+            try {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(content, 'text/xml');
+                
+                // Kiểm tra lỗi phân tích
+                const parserError = xmlDoc.querySelector('parsererror');
+                if (parserError) {
+                    throw new Error('File không phải là file GPX hợp lệ');
+                }
+                
+                // Lấy các điểm waypoint
+                const waypoints = xmlDoc.querySelectorAll('wpt');
+                if (waypoints.length === 0) {
+                    throw new Error('Không tìm thấy điểm nào trong file GPX');
+                }
+                
+                // Lấy thông tin metadata
+                const metadata = xmlDoc.querySelector('metadata');
+                const metadataName = metadata ? metadata.querySelector('name') : null;
+                const metadataTime = metadata ? metadata.querySelector('time') : null;
+                const gpxName = metadataName ? metadataName.textContent : 'Không có tên';
+                const gpxTime = metadataTime ? new Date(metadataTime.textContent) : null;
+                
+                // Hiển thị thông tin file
+                let fileInfoHTML = `
+                    <p><strong>Tên file:</strong> ${fileName}</p>
+                    <p><strong>Tên GPX:</strong> ${gpxName}</p>
+                `;
+                
+                if (gpxTime) {
+                    fileInfoHTML += `<p><strong>Thời gian tạo:</strong> ${gpxTime.toLocaleString()}</p>`;
+                }
+                
+                fileInfoHTML += `<p><strong>Số điểm:</strong> ${waypoints.length}</p>`;
+                
+                // Hiển thị thông tin và hỏi người dùng có muốn nhập các điểm này không
+                fileInfoElement.innerHTML = fileInfoHTML;
+                fileInfoContainer.style.display = 'block';
+                
+                if (confirm(`Đã tìm thấy ${waypoints.length} điểm trong file GPX.\nBạn có muốn thêm các điểm này vào danh sách hiện tại không?`)) {
+                    // Phân tích và thêm các điểm
+                    waypoints.forEach(wpt => {
+                        const lat = parseFloat(wpt.getAttribute('lat'));
+                        const lon = parseFloat(wpt.getAttribute('lon'));
+                        const nameElement = wpt.querySelector('name');
+                        const timeElement = wpt.querySelector('time');
+                        
+                        if (isValidCoordinate(lat, lon)) {
+                            const point = {
+                                name: nameElement ? nameElement.textContent : 'Không có tên',
+                                lat: lat,
+                                lon: lon,
+                                time: timeElement ? timeElement.textContent : new Date().toISOString()
+                            };
+                            
+                            points.push(point);
+                        }
+                    });
+                    
+                    // Lưu và hiển thị danh sách điểm
+                    savePoints();
+                    renderPointList();
+                }
+            } catch (error) {
+                alert('Lỗi khi phân tích file GPX: ' + error.message);
+                fileInfoContainer.style.display = 'none';
+            }
+        }
+        
+        // Xử lý sự kiện khi thay đổi loại điểm
+        pointTypeSelect.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customNameContainer.style.display = 'block';
+            } else {
+                customNameContainer.style.display = 'none';
+            }
+        });
+        
+        // Thêm các sự kiện click
+        addPointButton.addEventListener('click', addPoint);
+        exportGPXButton.addEventListener('click', exportGPX);
+        clearAllButton.addEventListener('click', clearAllPoints);
+        
+        // Sự kiện cho chức năng nhập file GPX
+        importGPXButton.addEventListener('click', function() {
+            gpxFileInput.click();
+        });
+        
+        gpxFileInput.addEventListener('change', function(e) {
+            if (this.files && this.files.length > 0) {
+                const file = this.files[0];
+                if (file.name.toLowerCase().endsWith('.gpx')) {
+                    readGPXFile(file);
+                } else {
+                    alert('Vui lòng chọn file GPX');
+                }
+                this.value = ''; // Reset input để cho phép chọn lại cùng một file
+            }
+        });
+        
+        // Thêm sự kiện Enter khi nhập tọa độ
+        coordinatesInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addPoint();
+            }
+        });
+        
+        // Tải dữ liệu khi trang được tải
+        document.addEventListener('DOMContentLoaded', loadPoints);
+    </script>
+</body>
+</html>
