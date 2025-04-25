@@ -1,6 +1,9 @@
 // Global variables
 let points = [];
 const storageKey = 'gpxPoints';
+const customNameStorageKey = 'customPointName'; // New key for custom name
+const darkModeStorageKey = 'darkMode'; // New key for dark mode preference
+let selectedPointType = '40km/h'; // New variable to track selected point type
 
 // Select DOM elements
 const inputMethodSelect = document.getElementById('inputMethod');
@@ -14,7 +17,10 @@ const coordErrorElement = document.getElementById('coord-error');
 const getGpsPointButton = document.getElementById('getGpsPoint');
 const gpsStatusElement = document.getElementById('gps-status');
 
-const pointTypeSelect = document.getElementById('pointType');
+// Updated point type selection elements
+const pointTypeSelectionDiv = document.getElementById('pointTypeSelection');
+const pointTypeIcons = pointTypeSelectionDiv.querySelectorAll('.point-type-icon'); // Get all icon buttons
+
 const customNameContainer = document.getElementById('customNameContainer');
 const customNameInput = document.getElementById('customName');
 
@@ -26,6 +32,44 @@ const importGPXButton = document.getElementById('importGPXBtn');
 const gpxFileInput = document.getElementById('gpxFileInput');
 const fileInfoContainer = document.getElementById('fileInfoContainer');
 const fileInfoElement = document.getElementById('fileInfo');
+
+// Dark Mode Elements
+const darkModeToggle = document.getElementById('darkModeToggle');
+const bodyElement = document.body;
+
+
+// --- Dark Mode Functions ---
+function enableDarkMode() {
+    bodyElement.classList.add('dark-mode');
+    localStorage.setItem(darkModeStorageKey, 'enabled');
+    darkModeToggle.textContent = 'Chế độ sáng';
+}
+
+function disableDarkMode() {
+    bodyElement.classList.remove('dark-mode');
+    localStorage.setItem(darkModeStorageKey, 'disabled');
+     darkModeToggle.textContent = 'Chế độ tối';
+}
+
+function toggleDarkMode() {
+    if (bodyElement.classList.contains('dark-mode')) {
+        disableDarkMode();
+    } else {
+        enableDarkMode();
+    }
+}
+
+function loadDarkModePreference() {
+    const preference = localStorage.getItem(darkModeStorageKey);
+    if (preference === 'enabled') {
+        enableDarkMode();
+    } else {
+        disableDarkMode(); // Default to light mode
+    }
+}
+
+
+// --- Utility Functions ---
 
 // Function to parse coordinates from string
 function parseCoordinates(input) {
@@ -80,10 +124,10 @@ function isValidCoordinate(lat, lon) {
 
 // Get point name from user selection or custom input
 function getPointName() {
-    if (pointTypeSelect.value === 'custom') {
+    if (selectedPointType === 'custom') {
         return customNameInput.value.trim() || 'Điểm tùy chỉnh';
     }
-    return pointTypeSelect.value;
+    return selectedPointType;
 }
 
 // Add a point object to the array, save, and render
@@ -91,6 +135,11 @@ function addPointObject(point) {
     points.push(point);
     savePoints();
     renderPointList();
+
+    // If custom name was used, save it for future use
+    if (selectedPointType === 'custom') {
+        saveCustomName(customNameInput.value.trim());
+    }
 }
 
 // Handle manual point addition
@@ -110,7 +159,7 @@ function addManualPoint() {
     clearError();
 
     const point = {
-        name: getPointName(),
+        name: getPointName(), // Use updated getPointName
         lat: parsedCoord.lat,
         lon: parsedCoord.lon,
         time: new Date().toISOString()
@@ -119,10 +168,11 @@ function addManualPoint() {
     addPointObject(point);
 
     coordinatesInput.value = '';
-    if (pointTypeSelect.value === 'custom') {
-         customNameInput.value = '';
+    if (selectedPointType === 'custom') {
+         // Don't clear customNameInput here, it's saved and reused
+         // customNameInput.value = '';
     }
-     coordinatesInput.focus(); // Keep focus on input for quick entry
+     coordinatesInput.focus();
 }
 
 // Handle GPS point acquisition
@@ -130,7 +180,7 @@ function getGpsPoint() {
     clearStatus();
     gpsStatusElement.className = 'message info';
     gpsStatusElement.textContent = 'Đang lấy vị trí...';
-    getGpsPointButton.disabled = true; // Disable button while fetching
+    getGpsPointButton.disabled = true;
 
     if (!navigator.geolocation) {
         showStatus('Thiết bị không hỗ trợ GPS.', 'error');
@@ -138,52 +188,61 @@ function getGpsPoint() {
         return;
     }
 
-    const options = {
-        enableHighAccuracy: true, // Request high accuracy (uses GPS if available)
-        timeout: 8000, // Reduced timeout to 8 seconds - adjust if needed
-        maximumAge: 0 // Don't use cached position
-    };
+    navigator.permissions && navigator.permissions.query({ name: 'geolocation' }).then(permissionStatus => {
+        if (permissionStatus.state === 'denied') {
+            showStatus('Quyền truy cập vị trí bị từ chối. Vui lòng thay đổi cài đặt trình duyệt/thiết bị.', 'error');
+            getGpsPointButton.disabled = false;
+            return;
+        }
 
-    navigator.geolocation.getCurrentPosition(
-        (position) => { // Success callback
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
+        const options = {
+            enableHighAccuracy: true,
+            timeout: 8000, // Reduced timeout
+            maximumAge: 0
+        };
 
-            const point = {
-                name: getPointName(),
-                lat: lat,
-                lon: lon,
-                time: new Date().toISOString()
-            };
+        navigator.geolocation.getCurrentPosition(
+            (position) => { // Success callback
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
 
-            addPointObject(point);
-            showStatus(`Đã thêm điểm từ GPS: Lat ${lat.toFixed(6)}, Lon ${lon.toFixed(6)}`, 'success');
+                const point = {
+                    name: getPointName(), // Use updated getPointName
+                    lat: lat,
+                    lon: lon,
+                    time: new Date().toISOString()
+                };
 
-            if (pointTypeSelect.value === 'custom') {
-                customNameInput.value = '';
-            }
-             getGpsPointButton.disabled = false; // Enable button
-        },
-        (error) => { // Error callback
-            let errorMessage = 'Không thể lấy vị trí.';
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    errorMessage = 'Bạn đã từ chối cấp quyền vị trí. Vui lòng thay đổi cài đặt trình duyệt/thiết bị.';
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    errorMessage = 'Thông tin vị trí không khả dụng (GPS yếu hoặc tắt).';
-                    break;
-                case error.TIMEOUT:
-                    errorMessage = 'Hết thời gian chờ lấy vị trí. Đảm bảo bạn ở ngoài trời và bật GPS.';
-                    break;
-                 default:
-                    errorMessage = `Lỗi không xác định khi lấy vị trí: ${error.message}`;
-            }
-            showStatus(errorMessage, 'error');
-             getGpsPointButton.disabled = false; // Enable button
-        },
-        options
-    );
+                addPointObject(point);
+                showStatus(`Đã thêm điểm từ GPS: Lat ${lat.toFixed(6)}, Lon ${lon.toFixed(6)}`, 'success');
+
+                if (selectedPointType === 'custom') {
+                    // Don't clear customNameInput here
+                    // customNameInput.value = '';
+                }
+                getGpsPointButton.disabled = false;
+            },
+            (error) => { // Error callback
+                let errorMessage = 'Không thể lấy vị trí.';
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = 'Bạn đã từ chối cấp quyền vị trí. Vui lòng thay đổi cài đặt trình duyệt/thiết bị.';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = 'Thông tin vị trí không khả dụng (GPS yếu hoặc tắt).';
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = 'Hết thời gian chờ lấy vị trí. Đảm bảo bạn ở ngoài trời và bật GPS.';
+                        break;
+                    default:
+                        errorMessage = `Lỗi không xác định khi lấy vị trí: ${error.message}`;
+                }
+                showStatus(errorMessage, 'error');
+                getGpsPointButton.disabled = false;
+            },
+            options
+        );
+    });
 }
 
 // Display status message (for GPS)
@@ -235,13 +294,13 @@ function renderPointList() {
         pointListElement.appendChild(pointElement);
     });
 
-    // Add event listeners to delete buttons
+    // Add event listeners to delete buttons using delegation (more efficient)
     pointListElement.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const index = parseInt(this.getAttribute('data-index'));
-            deletePoint(index);
-        });
-    });
+         button.addEventListener('click', function() {
+             const index = parseInt(this.getAttribute('data-index'));
+             deletePoint(index);
+         });
+     });
 }
 
 // Delete a point
@@ -264,13 +323,11 @@ function loadPoints() {
     if (savedPoints) {
         try {
             points = JSON.parse(savedPoints);
-            // Ensure points have a valid time field if loading older data
+            // Ensure points have a valid time field and valid coordinates
             points = points.map(p => ({
                 ...p,
                 time: p.time && !isNaN(new Date(p.time)) ? p.time : new Date().toISOString()
-            }));
-             // Validate coordinates just in case
-             points = points.filter(p => isValidCoordinate(p.lat, p.lon));
+            })).filter(p => isValidCoordinate(p.lat, p.lon));
 
             renderPointList();
         } catch (e) {
@@ -282,6 +339,20 @@ function loadPoints() {
         }
     }
 }
+
+// Save custom point name to Local Storage
+function saveCustomName(name) {
+    localStorage.setItem(customNameStorageKey, name);
+}
+
+// Load custom point name from Local Storage
+function loadCustomName() {
+    const savedName = localStorage.getItem(customNameStorageKey);
+    if (savedName) {
+        customNameInput.value = savedName;
+    }
+}
+
 
 // Generate and download GPX file
 function exportGPX() {
@@ -313,7 +384,7 @@ function exportGPX() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `waypoints_${new Date().toISOString().slice(0,10)}.gpx`; // Include date in filename
+    a.download = `waypoints_${new Date().toISOString().slice(0,10)}.gpx`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -459,8 +530,8 @@ function switchInputMethod() {
         gpsInputSection.style.display = 'block';
         manualInputSection.classList.add('input-gps');
         manualInputSection.classList.remove('input-manual');
-        gpsInputSection.classList.add('input-manual'); // This class name is confusing, but matches the original logic for switching visibility
-        gpsInputSection.classList.remove('input-gps'); // Remove default hidden class
+        gpsInputSection.classList.add('input-manual'); // Reusing class for display logic
+        gpsInputSection.classList.remove('input-gps');
 
         // Prompt for location permission immediately if not granted
         navigator.permissions && navigator.permissions.query({name: 'geolocation'}).then(permissionStatus => {
@@ -469,23 +540,36 @@ function switchInputMethod() {
              } else if (permissionStatus.state === 'denied') {
                  showStatus('Quyền truy cập vị trí bị từ chối. Vui lòng thay đổi cài đặt trình duyệt/thiết bị.', 'error');
              } else {
-                  // Permission granted, nothing to do, status will update when 'Get GPS Point' is clicked
-                  clearStatus(); // Clear initial prompt/denied status if granted
+                  clearStatus(); // Clear initial prompt/denied status if granted or already granted
              }
         });
     }
 }
 
-// Event listeners
-pointTypeSelect.addEventListener('change', function() {
-    if (this.value === 'custom') {
+// Handle point type icon selection
+function selectPointType(type) {
+    selectedPointType = type;
+
+    // Update UI - set 'selected' class on the clicked button
+    pointTypeIcons.forEach(iconButton => {
+        iconButton.classList.remove('selected');
+        if (iconButton.getAttribute('data-type') === type) {
+            iconButton.classList.add('selected');
+        }
+    });
+
+    // Show/hide custom name input
+    if (selectedPointType === 'custom') {
         customNameContainer.style.display = 'block';
         customNameInput.focus();
+        loadCustomName(); // Load saved custom name
     } else {
         customNameContainer.style.display = 'none';
     }
-});
+}
 
+
+// --- Event Listeners ---
 addManualPointButton.addEventListener('click', addManualPoint);
 getGpsPointButton.addEventListener('click', getGpsPoint);
 
@@ -504,7 +588,7 @@ gpxFileInput.addEventListener('change', function(e) {
         } else {
             alert('Vui lòng chọn file GPX.');
         }
-        this.value = ''; // Reset input to allow selecting the same file again
+        this.value = ''; // Reset input
     }
 });
 
@@ -516,9 +600,28 @@ coordinatesInput.addEventListener('keypress', function(e) {
     }
 });
 
+// Add event listeners for the new point type icon buttons
+pointTypeIcons.forEach(iconButton => {
+    iconButton.addEventListener('click', () => {
+        const type = iconButton.getAttribute('data-type');
+        selectPointType(type);
+    });
+});
 
-// Initial setup on page load
+// Dark Mode Toggle Listener
+darkModeToggle.addEventListener('click', toggleDarkMode);
+
+
+// --- Initial Setup ---
 document.addEventListener('DOMContentLoaded', () => {
-    loadPoints();
+    loadPoints(); // Load saved points
+    loadCustomName(); // Load saved custom name
+    loadDarkModePreference(); // Load dark mode preference
+
+    // Set initial selected point type based on default or loaded state (defaults to 40km/h)
+    // The initial 'selected' class in HTML ensures 40km/h is the default
+    // If you wanted to load the last used type, you'd need to save/load that too.
+    selectPointType(selectedPointType); // Initialize the UI based on the default/initial selected type
+
     switchInputMethod(); // Set up initial UI based on default selected method
 });

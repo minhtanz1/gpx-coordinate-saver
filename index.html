@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lưu Tọa Độ Sang GPX</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
 </head>
 <body>
     <div class="container">
         <h1>Lưu Tọa Độ Sang GPX</h1>
+
+        <!-- Dark Mode Toggle Button -->
+        <button id="darkModeToggle" class="dark-mode-toggle">Chế độ tối</button>
 
         <div class="form-group">
             <label for="inputMethod">Phương Thức Nhập:</label>
@@ -23,7 +27,7 @@
              <h3>Nhập Thủ Công</h3>
              <div class="form-group">
                 <label for="coordinates">Tọa Độ:</label>
-                <input type="text" id="coordinates" placeholder="Ví dụ: 21.0285,105.8542 hoặc 21.0285 105.8542">
+                <input type="text" id="coordinates" placeholder="Ví dụ: 21.0285,105.8542">
                 <div class="message error" id="coord-error"></div>
             </div>
              <button id="addManualPoint">Thêm Điểm</button>
@@ -31,23 +35,54 @@
 
          <!-- Section for GPS Input -->
         <div id="gpsInputSection" class="input-section">
+            <h3>Lấy Từ GPS</h3>
             <div id="gps-status" class="message info"></div>
             <button id="getGpsPoint">Lấy Tọa Độ & Thêm Điểm</button>
         </div>
 
         <div class="form-group">
-            <label for="pointType">Loại Điểm:</label>
-            <select id="pointType">
-                <option value="40km/h">40km/h</option>
-                <option value="50km/h">50km/h</option>
-                <option value="60km/h">60km/h</option>
-                <option value="70km/h">70km/h</option>
-                <option value="80km/h">80km/h</option>
-                <option value="90km/h">90km/h</option>
-                <option value="100km/h">100km/h</option>
-                <option value="120km/h">120km/h</option>
-                <option value="custom">Tên khác...</option>
-            </select>
+            <label>Chọn Loại Điểm:</label>
+            <div class="point-type-selector" id="pointTypeSelection">
+                <!-- Buttons for speed limits (replace with your SVG paths) -->
+                <button class="point-type-icon selected" data-type="40km/h" title="40km/h">
+                     <img src="img/40.svg" alt="" height="64" width="64">
+                     <!-- <span>40</span> -->
+                </button>
+                 <button class="point-type-icon" data-type="50km/h" title="50km/h">
+                    <img src="img/50.svg" alt="" height="64" width="64">
+                </button>
+                 <button class="point-type-icon" data-type="60km/h" title="60km/h">
+                    <img src="img/60.svg" alt="" height="64" width="64">
+                </button>
+                <!-- Add other speed limit buttons similarly -->
+                <button class="point-type-icon" data-type="70km/h" title="70km/h">
+                    <img src="img/70.svg" alt="" height="64" width="64">
+                </button>
+                <button class="point-type-icon" data-type="80km/h" title="80km/h">
+                    <img src="img/80.svg" alt="" height="64" width="64">
+                </button>
+                 <button class="point-type-icon" data-type="90km/h" title="90km/h">
+                    <img src="img/90.svg" alt="" height="64" width="64">
+                </button>
+                 <button class="point-type-icon" data-type="100km/h" title="100km/h">
+                    <img src="img/100.svg" alt="" height="64" width="64">
+                </button>
+                <button class="point-type-icon" data-type="120km/h" title="120km/h">
+                    <img src="img/120.svg" alt="" height="64" width="64">
+                </button>
+
+                <button class="point-type-icon" data-type="KDC" title="120km/h">
+                    <img src="img/KDC.svg" alt="" height="64" width="64">
+                </button>
+                <button class="point-type-icon" data-type="HKDC" title="120km/h">
+                    <img src="img/HKDC.svg" alt="" height="64" width="64">
+                </button>
+
+                <!-- Custom type button -->
+                <button class="point-type-icon" data-type="custom" title="Tên khác...">
+                    <img src="img/Khác.svg" alt="" height="64" width="64">
+                </button>
+            </div>
 
             <div class="custom-name-input" id="customNameContainer">
                 <label for="customName">Tên tùy chỉnh:</label>
@@ -56,9 +91,9 @@
         </div>
 
         <div class="action-buttons">
-            <button id="exportGPX">Xuất File GPX</button>
+            <button id="exportGPX">Xuất GPX</button>
             <button id="clearAll">Xóa Tất Cả</button>
-            <button id="importGPXBtn">Đọc File GPX</button>
+            <button id="importGPXBtn">Đọc GPX</button>
             <input type="file" id="gpxFileInput" class="hidden-input" accept=".gpx">
         </div>
 
