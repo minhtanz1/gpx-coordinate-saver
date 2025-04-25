@@ -278,7 +278,12 @@ function renderPointList() {
         return;
     }
 
-    points.forEach((point, index) => {
+    // <-- CHỖ CẦN SỬA: Thay đổi vòng lặp để đi ngược từ cuối mảng lên
+    // points.forEach((point, index) => { ... }); // Dòng cũ
+    for (let i = points.length - 1; i >= 0; i--) { // <-- Vòng lặp mới
+        const point = points[i];
+        const index = i; // <-- Lấy index hiện tại trong vòng lặp
+
         const timestamp = point.time ? new Date(point.time).toLocaleString() : 'Không rõ thời gian';
 
         const pointElement = document.createElement('div');
@@ -291,16 +296,18 @@ function renderPointList() {
             </div>
             <button class="delete-btn" data-index="${index}">Xóa</button>
         `;
+        // Vẫn thêm vào cuối (appendChild), vì ta đã lặp ngược mảng
         pointListElement.appendChild(pointElement);
-    });
+    }
 
-    // Add event listeners to delete buttons using delegation (more efficient)
+    // Thêm sự kiện cho nút xóa (phần này giữ nguyên)
     pointListElement.querySelectorAll('.delete-btn').forEach(button => {
-         button.addEventListener('click', function() {
-             const index = parseInt(this.getAttribute('data-index'));
-             deletePoint(index);
-         });
-     });
+        button.addEventListener('click', function() {
+            // Lưu ý: index ở đây là index ban đầu trong mảng 'points'
+            const index = parseInt(this.getAttribute('data-index'));
+            deletePoint(index);
+        });
+    });
 }
 
 // Delete a point
