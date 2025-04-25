@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     max-width: 800px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 10px;
     line-height: 1.6;
     background-color: #ecf0f1;
     color: #34495e;
@@ -11,18 +11,20 @@ body {
 h1 {
     text-align: center;
     color: #2c3e50;
-    margin-bottom: 20px;
+    font-size: 20px;
 }
-
+h3 {
+    font-size: 18px;
+}
 .container {
     background-color: #fff;
     border-radius: 8px;
-    padding: 25px;
+    padding: 10px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 label {
@@ -182,9 +184,11 @@ button:disabled {
 .action-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px; /* Use gap for spacing instead of margin-right on buttons */
+    gap: 8px; /* Use gap for spacing instead of margin-right on buttons */
     margin-bottom: 20px;
     margin-top: 20px;
+    padding-bottom: 2px;
+    width: fit-content;
 }
 
 .action-buttons button {
@@ -320,7 +324,7 @@ body.dark-mode {
 .point-type-selector {
     display: flex;
     flex-wrap: wrap;
-    gap: 2px; /* Spacing between icon buttons */
+    gap: 0.5px; /* Spacing between icon buttons */
     margin-top: 5px;
     padding-bottom: 10px;
     border-bottom: 1px dashed #bdc3c7; /* Optional separator */
@@ -405,7 +409,7 @@ body.dark-mode {
 .action-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px; /* Smaller gap */
+    gap: 2px; /* Smaller gap */
     margin-top: -12px; /* Space above buttons */
     margin-bottom: -10px; /* Space below buttons */
 }
