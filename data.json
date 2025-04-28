@@ -1,0 +1,103 @@
+[
+    {
+        "name": "30km/h",
+        "filename": "30.svg"
+    },
+    {
+        "name": "40km/h",
+        "filename": "40.svg"
+    },
+    {
+        "name": "50km/h",
+        "filename": "50.svg"
+    },
+    {
+        "name": "60km/h",
+        "filename": "60.svg"
+    },
+    {
+        "name": "70km/h",
+        "filename": "70.svg"
+    },
+    {
+        "name": "80km/h",
+        "filename": "80.svg"
+    },
+    {
+        "name": "90km/h",
+        "filename": "90.svg"
+    },
+    {
+        "name": "100km/h",
+        "filename": "100.svg"
+    },
+    {
+        "name": "120km/h",
+        "filename": "120.svg"
+    },
+    {
+        "name": "HKDC",
+        "filename": "HKDC.svg"
+    },
+    {
+        "name": "KDC",
+        "filename": "KDC.svg"
+    },
+    {
+        "name": "Camera đèn đỏ",
+        "filename": "red_light_cam.svg"
+    },
+    {
+        "name": "Camera phạt nguội",
+        "filename": "speed_cam.svg"
+    },
+    {
+        "name": "Cấm rẽ phải",
+        "filename": "cam_re_phai.svg"
+    },
+    {
+        "name": "Cấm rẽ trái",
+        "filename": "cam_re_trai.svg"
+    },
+    {
+        "name": "Cấm quay đầu & rẽ phải",
+        "filename": "cam_quay_dau_re_phai.svg"
+    },
+    {
+        "name": "Cấm quay đầu & rẽ trái",
+        "filename": "cam_quay_dau_re_trai.svg"
+    },
+    {
+        "name": "Cấm quay đầu trái",
+        "filename": "cam_quay_dau_trai.svg"
+    },
+    {
+        "name": "Cấm vượt",
+        "filename": "cam_vuot.svg"
+    },
+    {
+        "name": "Hết cấm vượt",
+        "filename": "het_cam_vuot.svg"
+    },
+    {
+        "name": "Cấm đổ xe",
+        "filename": "cam_do_xe.svg"
+    },
+    {
+        "name": "Cấm dừng và đổ",
+        "filename": "cam_dung_va_do.svg"
+    },
+    {
+        "name": "Hết tốc độ tối đa",
+        "filename": "het_toc_do_toi_da.svg"
+    },
+    {
+        "name": "Hết tất cả lệch cấm",
+        "filename": "het_tat_ca_lech_cam.svg"
+    },
+    {
+        "name": "Khác",
+        "filename": "Khác.svg",
+        "custom": true
+    }
+]
