@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lưu Tọa Độ Sang GPX</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/minhtanz1/gpx-coordinate-saver/refs/heads/testing/img/favicon.ico">
+    <link rel="icon" type="image/x-icon"
+        href="https://raw.githubusercontent.com/minhtanz1/gpx-coordinate-saver/refs/heads/testing/img/favicon.ico">
 </head>
+
 <body>
     <div class="container">
         <h1>Lưu Tọa Độ Sang GPX</h1>
@@ -24,22 +27,22 @@
 
         <!-- Section for Manual Input -->
         <div id="manualInputSection" class="input-section">
-             <h3>Nhập Thủ Công</h3>
-             <div class="form-group">
+            <h3>Nhập Thủ Công</h3>
+            <div class="form-group">
                 <label for="coordinates">Tọa Độ:</label>
                 <input type="text" id="coordinates" placeholder="Ví dụ: 21.0285,105.8542">
                 <div class="message error" id="coord-error"></div>
             </div>
-             <button id="addManualPoint">Thêm Điểm</button>
+            <button id="addManualPoint">Thêm Điểm</button>
         </div>
-        
+
         <div class="action-buttons">
             <button id="exportGPX">Xuất GPX</button>
             <button id="clearAll">Xóa Tất Cả</button>
             <button id="importGPXBtn">Đọc GPX</button>
             <input type="file" id="gpxFileInput" class="hidden-input" accept=".gpx">
         </div>
-         <!-- Section for GPS Input -->
+        <!-- Section for GPS Input -->
         <div id="gpsInputSection" class="input-section">
             <h3>Lấy Từ GPS</h3>
             <div id="gps-status" class="message info"></div>
@@ -47,54 +50,7 @@
         </div>
 
         <div class="form-group">
-            <label>Chọn Loại Điểm:</label>
             <div class="point-type-selector" id="pointTypeSelection">
-                <!-- Buttons for speed limits (replace with your SVG paths) -->
-                <button class="point-type-icon selected" data-type="40km/h" title="40km/h">
-                     <img src="https://raw.githubusercontent.com/minhtanz1/gpx-coordinate-saver/refs/heads/testing/img/40.svg" alt="" height="52" width="52">
-                     <!-- <span>40</span> -->
-                </button>
-                 <button class="point-type-icon" data-type="50km/h" title="50km/h">
-                    <img src="https://raw.githubusercontent.com/minhtanz1/gpx-coordinate-saver/refs/heads/testing/img/50.svg" alt="" height="52" width="52">
-                </button>
-                 <button class="point-type-icon" data-type="60km/h" title="60km/h">
-                    <img src="https://raw.githubusercontent.com/minhtanz1/gpx-coordinate-saver/refs/heads/testing/img/60.svg" alt="" height="52" width="52">
-                </button>
-                <!-- Add other speed limit buttons similarly -->
-                <button class="point-type-icon" data-type="70km/h" title="70km/h">
-                    <img src="https://raw.githubusercontent.com/minhtanz1/gpx-coordinate-saver/refs/heads/testing/img/70.svg" alt="" height="52" width="52">
-                </button>
-                <button class="point-type-icon" data-type="80km/h" title="80km/h">
-                    <img src="https://raw.githubusercontent.com/minhtanz1/gpx-coordinate-saver/refs/heads/testing/img/80.svg" alt="" height="52" width="52">
-                </button>
-                 <button class="point-type-icon" data-type="90km/h" title="90km/h">
-                    <img src="https://raw.githubusercontent.com/minhtanz1/gpx-coordinate-saver/refs/heads/testing/img/90.svg" alt="" height="52" width="52">
-                </button>
-                 <button class="point-type-icon" data-type="100km/h" title="100km/h">
-                    <img src="https://raw.githubusercontent.com/minhtanz1/gpx-coordinate-saver/refs/heads/testing/img/100.svg" alt="" height="52" width="52">
-                </button>
-                <button class="point-type-icon" data-type="120km/h" title="120km/h">
-                    <img src="https://raw.githubusercontent.com/minhtanz1/gpx-coordinate-saver/refs/heads/testing/img/120.svg" alt="" height="52" width="52">
-                </button>
-
-                <button class="point-type-icon" data-type="KDC" title="120km/h">
-                    <img src="https://raw.githubusercontent.com/minhtanz1/gpx-coordinate-saver/refs/heads/testing/img/KDC.svg" alt="" height="52" width="52">
-                </button>
-                <button class="point-type-icon" data-type="HKDC" title="120km/h">
-                    <img src="https://raw.githubusercontent.com/minhtanz1/gpx-coordinate-saver/refs/heads/testing/img/HKDC.svg" alt="" height="52" width="52">
-                </button>
-
-                <button class="point-type-icon" data-type="Camera đèn đỏ" title="Camera đèn đỏ">
-                    <img src="https://raw.githubusercontent.com/minhtanz1/gpx-coordinate-saver/refs/heads/testing/img/red_light_cam.svg" alt="" height="52" width="52">
-                </button>
-                <button class="point-type-icon" data-type="Camera phạt nguội" title="Camera phạt nguội">
-                    <img src="https://raw.githubusercontent.com/minhtanz1/gpx-coordinate-saver/refs/heads/testing/img/speed_cam.svg" alt="" height="52" width="52">
-                </button>
-
-                <!-- Custom type button -->
-                <button class="point-type-icon" data-type="custom" title="Tên khác...">
-                    <img src="https://raw.githubusercontent.com/minhtanz1/gpx-coordinate-saver/refs/heads/testing/img/Khác.svg" alt="" height="52" width="52">
-                </button>
             </div>
 
             <div class="custom-name-input" id="customNameContainer">
@@ -116,4 +72,5 @@
 
     <script src="script.js" defer></script>
 </body>
+
 </html>
