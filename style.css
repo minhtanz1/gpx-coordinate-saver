@@ -1,30 +1,53 @@
+/* General body and container styles (Keep or update as needed) */
 body {
     font-family: Arial, sans-serif;
     max-width: 800px;
     margin: 0 auto;
-    padding: 10px;
+    padding: 20px;
     line-height: 1.6;
-    background-color: #ecf0f1;
-    color: #34495e;
+    background-color: #ecf0f1; /* Light background */
+    color: #34495e; /* Dark text */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for dark mode */
 }
 
 h1 {
     text-align: center;
     color: #2c3e50;
-    font-size: 20px;
-}
-h3 {
-    font-size: 18px;
-}
-.container {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
 }
 
+.container {
+    background-color: #fff; /* Light container background */
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative; /* Needed for absolute positioning of dark mode toggle */
+}
+
+/* Dark Mode Toggle Button */
+.dark-mode-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    background-color: #bdc3c7;
+    color: #34495e;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-mode-toggle:hover {
+    background-color: #95a5a6;
+    color: white;
+}
+
+
+/* Form group styles (Keep) */
 .form-group {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 label {
@@ -34,7 +57,9 @@ label {
     color: #2c3e50;
 }
 
-input[type="text"], select {
+input[type="text"],
+textarea, /* Add textarea */
+select {
     width: 100%;
     padding: 10px;
     border: 1px solid #bdc3c7;
@@ -42,28 +67,31 @@ input[type="text"], select {
     box-sizing: border-box;
     font-size: 1rem;
     color: #34495e;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease; /* Add transitions */
 }
 
-input[type="text"]:focus, select:focus {
+input[type="text"]:focus,
+textarea:focus, /* Add textarea */
+select:focus {
     border-color: #3498db;
     outline: none;
     box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
 }
 
+/* Button styles (Keep main styles, modify action-buttons later) */
 button {
     background-color: #3498db;
     color: white;
     border: none;
     padding: 10px 20px;
-    border-radius: 6px;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 1rem;
     transition: background-color 0.3s ease, opacity 0.3s ease;
     display: inline-block;
     text-align: center;
-    margin-right: 6px; /* Keep some margin for action buttons */
-    margin-bottom: 6px;
+    margin-right: 10px;
+    margin-bottom: 10px;
 }
 
 button:hover {
@@ -80,14 +108,15 @@ button:disabled {
     opacity: 0.7;
 }
 
+/* Point List Styles (Keep base styles) */
 .point-list {
     margin-top: 20px;
-    max-height: 300px;
+    max-height: 300px; /* Keep scrollable */
     overflow-y: auto;
     border: 1px solid #ddd;
     border-radius: 4px;
     padding: 0 10px;
-    background-color: #ecf0f1;
+    background-color: #ecf0f1; /* Light background for list */
 }
 
 .no-points {
@@ -98,8 +127,7 @@ button:disabled {
 
 .point-item {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column; /* Stack info and inputs vertically */
     padding: 12px 0;
     border-bottom: 1px solid #ddd;
 }
@@ -108,10 +136,11 @@ button:disabled {
     border-bottom: none;
 }
 
-.point-item div {
-    flex-grow: 1;
-    margin-right: 10px;
-    word-break: break-word; /* Prevent long names from overflowing */
+.point-item div:first-child { /* Div containing name, lat, lon, time */
+     flex-grow: 1;
+     margin-right: 10px; /* Removed margin as items are stacked */
+     word-break: break-word;
+     margin-bottom: 8px; /* Space between info and inputs */
 }
 
 .point-item strong {
@@ -120,11 +149,33 @@ button:disabled {
 
 .point-item small {
     color: #7f8c8d;
-    display: block; /* Ensure timestamp is on a new line */
+    display: block;
     margin-top: 3px;
+    font-size: 0.85rem; /* Smaller font for timestamp */
 }
 
-.delete-btn {
+/* Styles for the new input fields WITHIN the point list item */
+.point-item .point-details-input {
+    width: 100%; /* Take full width */
+    padding: 5px; /* Smaller padding */
+    font-size: 0.9rem; /* Smaller font */
+    margin-top: 0px; /* Adjusted margin */
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #fff; /* White background in light mode */
+}
+
+.point-item .point-details-input:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 3px rgba(52, 152, 219, 0.3);
+}
+
+/* Delete button within point item */
+.point-item .delete-btn {
+    align-self: flex-end; /* Align delete button to the right */
+    margin-top: 5px; /* Space above delete button */
     background-color: #e74c3c;
     color: white;
     border: none;
@@ -132,26 +183,25 @@ button:disabled {
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9rem;
-    flex-shrink: 0; /* Prevent button from shrinking */
+    flex-shrink: 0;
 }
 
-.delete-btn:hover {
+.point-item .delete-btn:hover {
     background-color: #c0392b;
 }
-
-.delete-btn:active {
+.point-item .delete-btn:active {
      background-color: #a93226;
 }
 
 
+/* Message styles (Keep) */
 .message {
     margin-top: 8px;
+    margin-bottom: 6px;
     padding: 8px;
-    margin-bottom:6px;
     border-radius: 4px;
     font-size: 0.9rem;
-    width: fit-content;
-    word-break: break-word; /* Prevent overflow */
+    word-break: break-word;
 }
 
 .error {
@@ -172,29 +222,45 @@ button:disabled {
     border: 1px solid #cce5ff;
 }
 
+/* Custom Name Input (Keep initial state) */
 .custom-name-input {
     margin-top: 15px;
-    display: none;
+    display: none; /* Hidden by default, controlled by JS */
 }
 
 .hidden-input {
     display: none;
 }
 
+/* Action Buttons Styles (Smaller, less prominent) */
 .action-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px; /* Use gap for spacing instead of margin-right on buttons */
-    margin-bottom: 20px;
-    margin-top: 20px;
-    padding-bottom: 2px;
-    width: fit-content;
+    gap: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    justify-content: center; /* Center the action buttons */
 }
 
 .action-buttons button {
-     margin-right: 0; /* Remove extra margin added by button rule */
+    padding: 8px 15px;
+    font-size: 0.95rem;
+    background-color: #bdc3c7; /* Grey background */
+    color: #34495e; /* Dark text */
+    margin-right: 0; /* Override general button margin */
 }
 
+.action-buttons button:hover {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.action-buttons button:active {
+     background-color: #7f8c8d;
+}
+
+
+/* File Info Styles (Keep) */
 .file-info {
     margin-top: 20px;
     padding: 15px;
@@ -215,35 +281,85 @@ button:disabled {
     font-size: 0.95rem;
 }
 
-/* Style for sections based on input method */
+/* Input Section Styles (Keep) */
 .input-section {
     border: 1px solid #bdc3c7;
     padding: 15px;
     border-radius: 4px;
-    margin-top: 15px;
-    margin-bottom: 20px;
-    background-color: #fcfcfc;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #fcfcfc; /* Light background */
 }
 
 .input-section h3 {
     margin-top: 0;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     color: #34495e;
-    border-bottom: 1px dashed #afb3b6;
-    padding-bottom: 8px;
+    border-bottom: 1px dashed #ecf0f1;
+    padding-bottom: 10px;
 }
 
-/* Ensure correct section is shown by default/JS */
+/* Ensure correct section is shown by JS */
 #manualInputSection.input-gps { display: none; }
 #gpsInputSection.input-manual { display: none; }
 
-body.dark-mode {
-    background-color: #343a40;
-    color: #e9ecef;
+
+/* Point Type Selector (New styles for the icon container) */
+.point-type-selector {
+    display: flex; /* Arrange icons in a row */
+    flex-wrap: wrap; /* Wrap to next line if needed */
+    gap: 4px; /* Space between icons */
+    margin-bottom: 5px;
+    padding: 2px 0;
+    justify-content: center; /* Center the icons */
+}
+
+/* Individual Point Type Icon Button */
+.point-type-icon {
+    background-color: #ecf0f1; /* Light background */
+    border: 2px solid transparent; /* Default transparent border */
+    padding: 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+    flex-shrink: 0; /* Prevent shrinking */
+    width: 50px; /* Fixed size */
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0; /* Remove default button margin */
+}
+
+.point-type-icon:hover {
+    background-color: #bdc3c7; /* Hover background */
+    border-color: #95a5a6;
+}
+
+/* Style for the selected icon */
+.point-type-icon.selected {
+    border-color: #3498db; /* Prominent border color */
+    background-color: #e9f5fe; /* Lighter background */
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.5); /* Add shadow */
+}
+
+/* Style for the image inside the icon button */
+.point-type-icon img {
+    display: block;
+    width: 40px; /* Image size */
+    height: 40px; /* Image size */
+    object-fit: contain;
+}
+
+
+/* --- Dark Mode Styles --- */
+.dark-mode {
+    background-color: #2c3e50;
+    color: #ecf0f1;
 }
 
 .dark-mode .container {
-    background-color: #454d55;
+    background-color: #34495e;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
@@ -251,222 +367,154 @@ body.dark-mode {
 .dark-mode h3,
 .dark-mode label,
 .dark-mode .point-item strong {
-    color: #dee2e6;
+    color: #ecf0f1;
 }
+
+.dark-mode .dark-mode-toggle {
+    background-color: #4f6f8e;
+    color: #ecf0f1;
+}
+.dark-mode .dark-mode-toggle:hover {
+     background-color: #5f81a3;
+}
+
 
 .dark-mode input[type="text"],
+.dark-mode textarea, /* Add textarea */
 .dark-mode select {
-    background-color: #5a6268;
-    border-color: #6c757d;
-    color: #e9ecef;
+    background-color: #4f6f8e;
+    color: #ecf0f1;
+    border-color: #7f8c8d;
 }
-
+.dark-mode input::placeholder {
+    color: #ecf0f16c;
+}
 .dark-mode input[type="text"]:focus,
+.dark-mode textarea:focus, /* Add textarea */
 .dark-mode select:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-.dark-mode .input-section {
-     border-color: #6c757d;
-     background-color: #4f575e;
-}
-
-.dark-mode .input-section h3 {
-     border-bottom-color: #5a6268;
-}
-
-.dark-mode .point-list {
-    background-color: #5a6268;
-    border-color: #6c757d;
-}
-
-.dark-mode .no-points,
-.dark-mode .point-item small,
-.dark-mode .point-item {
-    color: #ced4da;
-    border-bottom-color: #6c757d;
-}
-
-.dark-mode .point-item:hover {
-    background-color: #6c757d;
-}
-
-.dark-mode .file-info {
-    background-color: #4f575e;
-    border-left-color: #007bff;
-}
-
-.dark-mode .file-info h3 {
-    color: #dee2e6;
-}
-
-.dark-mode .message.error {
-    background-color: #7a3933;
-    border-color: #dc3545;
-    color: #f8d7da;
-}
-
-.dark-mode .message.success {
-    background-color: #28a745; /* Keep green for success */
-    border-color: #218838;
-    color: #d4edda;
-}
-
-.dark-mode .message.info {
-    background-color: #007bff; /* Keep blue for info */
-    border-color: #0062cc;
-    color: #cce5ff;
-}
-
-
-/* Add styles for point type selector (replaces select) */
-.point-type-selector {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5px; /* Spacing between icon buttons */
-    margin-top: 5px;
-    padding-bottom: 10px;
-    border-bottom: 1px dashed #bdc3c7; /* Optional separator */
-}
-
-.dark-mode .point-type-selector {
-     border-bottom-color: #5a6268;
-}
-
-.point-type-icon {
-    flex: 0 0 auto; /* Prevent shrinking */
-    display: flex;
-    flex-direction: column; /* Stack icon and text */
-    align-items: center;
-    justify-content: center;
-    padding: 8px 12px; /* Adjust padding to control size */
-    border: 1px solid #bdc3c7;
-    border-radius: 4px;
-    background-color: #ecf0f1; /* Light grey background */
-    color: #34495e; /* Dark text */
-    cursor: pointer;
-    font-size: 0.9rem; /* Smaller text below icon */
-    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
-    min-width: 60px; /* Minimum width */
-    text-align: center;
-}
-
-.dark-mode .point-type-icon {
-    background-color: #5a6268;
-    border-color: #6c757d;
-    color: #e9ecef;
-}
-
-.point-type-icon:hover {
-    background-color: #dcdfe4;
-    border-color: #bdc3c7;
-}
-
-.dark-mode .point-type-icon:hover {
-    background-color: #6c757d;
-    border-color: #6c757d;
-}
-
-
-.point-type-icon svg {
-    display: block; /* Remove extra space below SVG */
-    margin-bottom: 4px; /* Space between icon and text */
-     width: 24px; /* Adjust SVG size */
-     height: 24px; /* Adjust SVG size */
-    fill: currentColor; /* Use parent text color */
-}
-
-.point-type-icon span {
-    font-weight: bold;
-}
-
-.point-type-icon.selected {
-    background-color: #3498db;
-    color: white;
     border-color: #3498db;
     box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
 }
 
-.dark-mode .point-type-icon.selected {
-    background-color: #007bff;
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+.dark-mode .point-list {
+    background-color: #4f6f8e;
+    border-color: #7f8c8d;
 }
 
-
-/* Style for custom name input container */
-.custom-name-input {
-    margin-top: 10px;
-    display: none; /* Managed by JS */
-}
-.dark-mode .custom-name-input {
-    border-top-color: #5a6268;
+.dark-mode .no-points,
+.dark-mode .point-item small {
+    color: #bdc3c7;
 }
 
-
-/* Adjustments for action buttons */
-.action-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2px; /* Smaller gap */
-    margin-top: -12px; /* Space above buttons */
-    margin-bottom: -10px; /* Space below buttons */
+.dark-mode .point-item {
+    border-bottom-color: #7f8c8d;
 }
 
-.action-buttons button {
-    background-color: #95a5a6; /* Less prominent grey */
+.dark-mode .point-item:hover {
+    background-color: #5f81a3;
+}
+
+/* Styles for the new input fields WITHIN the point list item in dark mode */
+
+.dark-mode button {
+    background-color: #3498db; /* Main buttons */
     color: white;
-    padding: 8px 15px; /* Smaller padding */
-    font-size: 0.9rem; /* Smaller font size */
-    border-radius: 4px;
-     flex-grow: 0; /* Don't grow */
+}
+.dark-mode button:hover {
+     background-color: #2980b9;
 }
 
 .dark-mode .action-buttons button {
-     background-color: #7f8c8d; /* Slightly darker grey in dark mode */
-     color: #e9ecef;
+    background-color: #7f8c8d; /* Action buttons */
+    color: #2c3e50;
 }
-
-.action-buttons button:hover {
-    background-color: #7f8c8d;
-}
-
 .dark-mode .action-buttons button:hover {
     background-color: #95a5a6;
+    color: #2c3e50;
 }
 
-.action-buttons button:active {
-     background-color: #7b8a8b;
+.dark-mode .delete-btn {
+     background-color: #e74c3c;
 }
-.dark-mode .action-buttons button:active {
-    background-color: #758283;
-}
-
-
-/* Style for dark mode toggle button */
-.dark-mode-toggle {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 5px 10px;
-    background-color: #bdc3c7;
-    color: #34495e;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    transition: background-color 0.3s ease, color 0.3s ease;
+.dark-mode .delete-btn:hover {
+    background-color: #c0392b;
 }
 
-.dark-mode .dark-mode-toggle {
-    background-color: #7f8c8d;
-    color: #e9ecef;
+.dark-mode .message.error {
+    background-color: #36463A;
+    color: #e74c3c;
+    border-color: #c0392b;
 }
 
-.dark-mode-toggle:hover {
-    background-color: #aeb6bf;
+.dark-mode .message.success {
+     background-color: #36463A;
+     color: #28a745;
+     border-color: #229954;
 }
-.dark-mode .dark-mode-toggle:hover {
-     background-color: #95a5a6;
+
+.dark-mode .message.info {
+    background-color: #36463A;
+    color: #3498db;
+     border-color: #2980b9;
+}
+
+.dark-mode .input-section {
+    border-color: #7f8c8d;
+    background-color: #4f6f8e;
+}
+
+.dark-mode .input-section h3 {
+    color: #ecf0f1;
+    border-bottom-color: #7f8c8d;
+}
+
+.dark-mode .file-info {
+    background-color: #4f6f8e;
+    border-left-color: #3498db;
+    color: #ecf0f1;
+}
+
+.dark-mode .file-info h3 {
+    color: #ecf0f1;
+}
+
+.dark-mode .point-type-icon {
+    background-color: #4f6f8e;
+    border-color: transparent;
+}
+.dark-mode .point-type-icon:hover {
+     background-color: #5f81a3;
+     border-color: #7f8c8d;
+}
+.dark-mode .point-type-icon.selected {
+    border-color: #3498db;
+    background-color: #5f81a3;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.7);
+}
+/* Styles for the new input fields WITHIN the point list item */
+.point-item label {
+    /* Make labels for time/notes smaller and less bold within the list */
+    font-size: 0.85rem;
+    font-weight: normal;
+    margin-bottom: 3px; /* Reduce space below label */
+    margin-top: 8px; /* Add space above label */
+    color: #555; /* Slightly softer color */
+}
+
+/* Ensure the first label (if any) within the point-item doesn't have top margin */
+.point-item label:first-of-type {
+    margin-top: 0;
+}
+.dark-mode .point-item label {
+    color: #bdc3c7; /* Lighter color for labels in dark mode */
+}
+
+.dark-mode .point-item .point-details-input {
+    background-color: #34495e;
+    color: #ecf0f1;
+    border-color: #7f8c8d;
+}
+.dark-mode .point-item .point-details-input:focus {
+     border-color: #3498db;
+     box-shadow: 0 0 3px rgba(52, 152, 219, 0.5);
 }
