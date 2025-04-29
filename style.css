@@ -3,7 +3,7 @@ body {
     font-family: Arial, sans-serif;
     max-width: 800px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 10px;
     line-height: 1.6;
     background-color: #ecf0f1; /* Light background */
     color: #34495e; /* Dark text */
@@ -43,7 +43,103 @@ h1 {
     background-color: #95a5a6;
     color: white;
 }
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black overlay */
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's on top */
+    display: none; /* Hidden by default */
+}
+#author-name-error {
+    display: none; /* Hide the error element by default */
+}
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 90%; /* Make it responsive */
+    text-align: center;
+}
 
+.modal-content h2 {
+    margin-top: 0;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.modal-content .form-group {
+    margin-bottom: 20px;
+    text-align: left; /* Align form elements left inside modal */
+}
+
+.modal-content label {
+    color: #34495e;
+}
+
+.modal-content input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box; /* Include padding in width */
+}
+
+.modal-content .message.error {
+    margin-top: 10px;
+}
+
+.modal-content button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.modal-content button:hover {
+    background-color: #2980b9;
+}
+
+.dark-mode .modal-content h2,
+.dark-mode .modal-content label {
+    color: #ecf0f1;
+}
+
+.dark-mode .dark-mode-toggle {
+    background-color: #4f6f8e;
+    color: #ecf0f1;
+}
+.dark-mode .dark-mode-toggle:hover {
+     background-color: #5f81a3;
+}
+
+.dark-mode .modal-content {
+    background-color: #34495e;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+.dark-mode .modal-content input[type="text"] {
+     background-color: #4f6f8e;
+     color: #ecf0f1;
+     border-color: #7f8c8d;
+}
+.dark-mode .modal-content input[type="text"]:focus {
+     border-color: #3498db;
+}
+.dark-mode .modal-content button {
+     background-color: #3498db;
+}
+.dark-mode .modal-content button:hover {
+     background-color: #2980b9;
+}
 
 /* Form group styles (Keep) */
 .form-group {
